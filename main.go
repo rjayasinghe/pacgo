@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 )
 
 func main() {
-	// init game
+	// init game (init called by runtime)
+	defer cleanup()
 
 	// load resources
 
@@ -57,5 +59,25 @@ var maze []string
 func printScreen() {
 	for _, line := range maze {
 		fmt.Println(line)
+	}
+}
+
+func init() { //called by the runtime
+	cbTerm := exec.Command("/bin/stty", "cbreak", "-echo")
+	cbTerm.Stdin = os.Stdin
+
+	err := cbTerm.Run()
+	if err != nil {
+		log.Fatalf("Unable to acticate cbreak mode terminal %v\n", err)
+	}
+}
+
+func cleanup() {
+	cookedTerm := exec.Command("/bin/stty", "-cbreak", "echo")
+	cookedTerm.Stdin = os.Stdin
+
+	err := cookedTerm.Run()
+	if err != nil {
+		log.Fatalf("Unable to reactivate cooked mode terminal: %v\n", err)
 	}
 }
