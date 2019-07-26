@@ -62,6 +62,20 @@ func printScreen() {
 	}
 }
 
+func readInput() (string, error) {
+	buffer := make([]byte, 100)
+	cnt, err := os.Stdin.Read(buffer)
+	if err != nil {
+		return "", err
+	}
+
+	if cnt == 1 && buffer[0] == 0x1b {
+		return "ESC", nil
+	}
+
+	return "", nil
+}
+
 func init() { //called by the runtime
 	cbTerm := exec.Command("/bin/stty", "cbreak", "-echo")
 	cbTerm.Stdin = os.Stdin
