@@ -25,16 +25,30 @@ func main() {
 	for {
 		//update screen
 		printScreen()
+		input, err := readInput()
+		if err != nil {
+			log.Printf("failed to ead input from STDIN: %v", err)
+		}
 
-		//process input
-
+		if input == "ESC" {
+			break
+		}
 		//process movement
 
 		//process collisions
 
 		//check game over
-		break
+		//break
 	}
+}
+
+func clearScreen() {
+	fmt.Printf("\x1b[2J")
+	moveCursor(0, 0)
+}
+
+func moveCursor(row, col int) {
+	fmt.Printf("\x1b[%d;%df", row+1, col+1)
 }
 
 func loadMaze() error {
@@ -57,6 +71,7 @@ func loadMaze() error {
 var maze []string
 
 func printScreen() {
+	clearScreen()
 	for _, line := range maze {
 		fmt.Println(line)
 	}
